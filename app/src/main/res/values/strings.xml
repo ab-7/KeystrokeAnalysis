@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">KeystrokeAnalysis</string>
+    <string name="quot">"</string>
+    <string name="pressure_velocity_and_duration">Pressure, velocity and duration</string>
+    <string name="android_swype_action">Android swype action</string>
+    <string name="describe">Describe</string>
+    <string name="date_format">dd-MM-yyyy</string>
+    <string name="time_format">yyyy-MM-dd HH:mm:ss.SSS</string>
+
+
+
+    <string name="KeystrokeAnalysis_file_path">/KeystrokeAnalysis/</string>
+    <string name="data_file_path">/KeystrokeAnalysis/DataFiles/</string>
+    <string name="log_file_path">Log/</string>
+    <string name="exception_file_path">Exception/</string>
+    <string name="word_separators">\u0020.,;:!?\n()[]*&amp;@{}/&lt;&gt;_+=|&quot;</string>
+
+
+</resources>
