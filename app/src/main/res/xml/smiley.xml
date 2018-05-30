@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="9.2%p"
+    android:horizontalGap="0.8%p"
+    android:verticalGap="5px"
+    android:keyHeight="52dp"
+    android:keyboardMode="@xml/smiley">
+
+    <Row>
+        <Key android:keyIcon="@drawable/smiling" android:codes="0x1F642"/>
+        <Key android:keyIcon="@drawable/inlove"
+            android:codes="0x1F60D"/>
+        <Key android:keyIcon="@drawable/happy"
+            android:codes="0x1F603"/>
+        <Key android:keyIcon="@drawable/sad"
+            android:codes="0x1F641"/>
+        <Key android:keyIcon="@drawable/happy1"
+            android:codes="0x1F601"/>
+        <Key android:keyIcon="@drawable/confused"
+            android:codes="0x1F610"/>
+        <Key android:keyIcon="@drawable/unhappy"
+            android:codes="0x1F622"/>
+        <Key android:keyIcon="@drawable/mad"
+            android:codes="0x1F620"/>
+        <Key android:keyIcon="@drawable/wink"
+            android:codes="0x1F609"/>
+        <Key android:keyIcon="@drawable/tongueout"
+            android:codes="0x1F60B"/>
+    </Row>
+
+    <Row>
+        <Key android:keyIcon="@drawable/smile" android:keyEdgeFlags="left" android:codes="0x1F60F"/>
+        <Key android:keyIcon="@drawable/quiet" android:codes="0x1F637"/>
+        <Key android:keyIcon="@drawable/kiss" android:codes="0x1F618"/>
+        <Key android:keyIcon="@drawable/angry" android:codes="0x1F611"/>
+        <Key android:keyIcon="@drawable/surprised" android:codes="0x1F632"/>
+        <Key android:keyIcon="@drawable/angry1" android:codes="0x1F62C"/>
+        <Key android:keyIcon="@drawable/crying" android:codes="0x1F62D"/>
+        <Key android:keyIcon="@drawable/ill" android:codes="0x1F630"/>
+        <Key android:keyIcon="@drawable/cool"   android:codes="0x1F60E"/>
+        <Key android:keyIcon="@drawable/tongueout1"   android:codes="0x1F61B" android:keyEdgeFlags="right"/>
+    </Row>
+
+    <Row>
+        <Key android:keyIcon="@drawable/sleeping"  android:codes="0x1F634" android:keyEdgeFlags="left"/>
+        <Key android:keyIcon="@drawable/embarrassed"  android:codes="0x1F60A"/>
+        <Key android:keyIcon="@drawable/angel" android:codes="0x1F607"/>
+        <Key android:keyIcon="@drawable/angry2" android:codes="0x1F624"/>
+        <Key android:keyIcon="@drawable/angry3" android:codes="0x1F621"/>
+        <Key android:keyIcon="@drawable/monkey" android:codes="0x1F648"/>
+        <Key android:keyIcon="@drawable/monkey1" android:codes="0x1F649"/>
+        <Key android:keyIcon="@drawable/monkey2" android:codes="0x1F64A"/>
+        <Key android:keyIcon="@drawable/sym_keyboard_delete"  android:keyWidth="21%p" android:keyEdgeFlags="right"
+            android:isRepeatable="true" android:codes="-5"/>
+    </Row>
+
+    <Row android:rowEdgeFlags="bottom">
+        <Key android:codes="-222" android:keyLabel="ABC" android:keyWidth="10%p" android:keyEdgeFlags="left"
+            android:isRepeatable="true"/>
+        <Key android:keyLabel="123" android:codes="-2"  android:keyWidth="10%p" android:isRepeatable="true"/>
+        <Key android:keyLabel=","  android:codes="44"/>
+        <Key android:keyIcon="@drawable/sym_keyboard_space"  android:keyWidth="40%p" android:isRepeatable="true" android:codes="32" />
+        <Key android:keyLabel="." android:codes="46"/>
+        <Key android:keyIcon="@drawable/sym_keyboard_return"  android:keyWidth="21%p" android:keyEdgeFlags="right" android:codes="-4"/>
+
+    </Row>
+
+</Keyboard>

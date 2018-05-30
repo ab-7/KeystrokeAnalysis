@@ -3,6 +3,7 @@ package com.example.adrija.keystrokeanalysis;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -17,17 +18,24 @@ import static com.example.adrija.keystrokeanalysis.R.layout.user_consent;
 
 public class UserConsent extends AppCompatActivity{
 
-    Button enInSet,selInMet,done;
+    Button grUsAcc,enInSet,selInMet,done;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(user_consent);
 
+        grUsAcc=findViewById(R.id.btnGrant_usage_access_settings);
         enInSet=findViewById(R.id.btnEnable_in_settings);
         selInMet=findViewById(R.id.btnSelect_ip_method);
         done=findViewById(R.id.btnDone1);
 
+
+        grUsAcc.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                startActivityForResult(new Intent(android.provider.Settings.ACTION_USAGE_ACCESS_SETTINGS), 0);
+            }
+        });
 
        enInSet.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View view) {

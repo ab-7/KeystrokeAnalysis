@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
             String date1=date.getDate()+"-"+date.getMonth()+"-"+date.getYear();
             String LogFileName = imei_no+" "+date1+" Log.txt";
             File LogFile = new File(logDir, LogFileName);
+            String ExceptionFileName = imei_no+" "+date1+" Log.txt";
+            File ExceptionFile = new File(exceptionDir,ExceptionFileName);
             FileWriter LogWriter = null;
             try {
                 LogWriter = new FileWriter(LogFile,true);

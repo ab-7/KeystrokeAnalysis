@@ -1,11 +1,12 @@
 <resources>
-    <string name="app_name">KeystrokeAnalysis</string>
+    <string name="app_name">KeystrokeAnalysis 1.0</string>
     <string name="quot">"</string>
     <string name="pressure_velocity_and_duration">Pressure, velocity and duration</string>
     <string name="android_swype_action">Android swype action</string>
     <string name="describe">Describe</string>
     <string name="date_format">dd-MM-yyyy</string>
     <string name="time_format">yyyy-MM-dd HH:mm:ss.SSS</string>
+    <string name="infotext">Use the CustomKeyboard as the default one\n\nThe keys that are logged are-\nspace, backspace, @, ^, *\n\n<b>No text is captured</b></string>
 
 
 
@@ -15,5 +16,19 @@
     <string name="exception_file_path">Exception/</string>
     <string name="word_separators">\u0020.,;:!?\n()[]*&amp;@{}/&lt;&gt;_+=|&quot;</string>
 
+    <string name="affectsense_file_path">/KeystrokeAnalysis/</string>
+    <string name="upload_data_page">UploadToServer.php</string>
+
+    <string name="server_uri">http://www.cnergres.iitkgp.ac.in/projects/type2motion/</string>
+    <string name="affectsense_server_uri">http://www.cnergres.iitkgp.ac.in/projects/type2motion/KeystrokeAnalysis/</string>
+
+    <string name="user_details_file">UserDetailsSharedPref</string>
+    <string name="user_name">UserName</string>
+    <string name="ctr_pkg">com.example.adrija.keystrokeanalysis</string>
+    <string name="sharedpref_file">EDAppSharedPref</string>
+    <string name="upload_data_interval">6</string>
+    <string name="upload_data_timestamp">UploadDataTimeStamp</string>
+    <string name="ctr_sharedpref_file">CtrSharedPref</string>
+    <string name="zip_file_ctr">ZipFileCtr</string>
 
 </resources>

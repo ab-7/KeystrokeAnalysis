@@ -10,24 +10,26 @@
     <Button
         android:id="@+id/btnStart_service"
         android:text="START APPLICATION"
-        android:textSize="22sp"
+        android:textSize="20sp"
         android:textColor="#000000"
-        android:layout_width="300dp"
-        android:layout_height="62dp"
-        android:layout_marginTop="56dp"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="76dp"
         android:gravity="center"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:background="#CDD1C4"/>
     <Button
         android:id="@+id/btnStop_service"
         android:text="UPLOAD TO SERVER"
-        android:textSize="22sp"
+        android:textSize="20sp"
         android:textColor="#000000"
-        android:layout_width="300dp"
-        android:layout_height="62dp"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
         android:layout_below="@+id/btnStart_service"
         android:gravity="center"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
+        android:background="#CDD1C4"
        />
     <!--Button
         android:id="@+id/btnDisp_Stat"
@@ -40,5 +42,14 @@
         android:gravity="center"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp" /-->
+    <EditText
+        android:layout_marginTop="96dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="         Test here         "
+        android:gravity="center"
+        android:textColorHint="#e3e4e5"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/btnStop_service"/>
 
 </RelativeLayout>

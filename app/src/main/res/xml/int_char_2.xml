@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="9.2%p"
+    android:horizontalGap="0.8%p"
+    android:verticalGap="5px"
+    android:keyHeight="52dp"
+    android:keyboardMode="@xml/int_char_2">
+
+    <Row>
+        <Key android:keyLabel="\\"  android:codes="92"  android:keyEdgeFlags="left"/>
+        <Key android:codes="39" android:keyLabel="\'"/>
+        <Key android:codes="126" android:keyLabel="~"/>
+        <Key android:codes="124" android:keyLabel="|"/>
+        <Key android:codes="8226" android:keyLabel="•" />
+        <Key android:codes="8730" android:keyLabel="√"/>
+        <Key android:codes="960" android:keyLabel="π"/>
+        <Key android:codes="247" android:keyLabel="÷"/>
+        <Key android:codes="215" android:keyLabel="×"/>
+        <Key android:codes="10003" android:keyLabel="✓"/>
+    </Row>
+
+    <Row>
+        <Key android:codes="8377" android:keyLabel="₹"  android:keyEdgeFlags="left"/>
+        <Key android:codes="163" android:keyLabel="£" />
+        <Key android:codes="8364" android:keyLabel="€"/>
+        <Key android:codes="36" android:keyLabel="$" />
+        <Key android:codes="162" android:keyLabel="¢"/>
+        <Key android:codes="176" android:keyLabel="°"/>
+        <Key android:codes="91" android:keyLabel="["/>
+        <Key android:codes="93" android:keyLabel="]" />
+        <Key android:codes="60" android:keyLabel="&lt;"/>
+        <Key android:codes="62" android:keyLabel="&gt;"/>
+    </Row>
+
+    <Row>
+        <Key android:keyIcon="@drawable/symbol_2"  android:keyWidth="10%p" android:keyEdgeFlags="left"
+            android:isRepeatable="true" android:codes="-111" />
+        <Key android:codes="123" android:keyLabel="{"/>
+        <Key android:codes="125" android:keyLabel="}"/>
+        <Key android:codes="169" android:keyLabel="©"/>
+        <Key android:codes="174" android:keyLabel="®"/>
+        <Key android:codes="8482" android:keyLabel="™"/>
+        <Key android:codes="96" android:keyLabel="`"/>
+        <Key android:codes="8710" android:keyLabel="∆"/>
+        <Key android:keyIcon="@drawable/sym_keyboard_delete"  android:keyWidth="21%p" android:keyEdgeFlags="right"
+            android:isRepeatable="true" android:codes="-5"/>
+    </Row>
+
+    <Row android:rowEdgeFlags="bottom">
+        <Key android:codes="-222" android:keyLabel="ABC" android:keyWidth="11%p" android:keyEdgeFlags="left"
+            android:isRepeatable="true"/>
+        <Key android:keyLabel=":)" android:keyWidth="10%p"  android:codes="-9"/>
+        <Key android:keyLabel="," android:codes="44"/>
+        <Key android:keyLabel="\-" android:codes="45"/>
+        <Key android:keyIcon="@drawable/sym_keyboard_space"  android:keyWidth="26%p" android:isRepeatable="true" android:codes="32"/>
+        <Key android:keyLabel="." android:codes="46"/>
+        <Key android:keyIcon="@drawable/sym_keyboard_return"  android:keyWidth="21%p" android:keyEdgeFlags="right" android:codes="-4"/>
+
+    </Row>
+
+</Keyboard>
