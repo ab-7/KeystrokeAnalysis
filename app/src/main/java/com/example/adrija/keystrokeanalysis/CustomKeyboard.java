@@ -1,61 +1,37 @@
 package com.example.adrija.keystrokeanalysis;
 
-import android.Manifest;
+
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
-import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
-import android.os.Build;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.VelocityTrackerCompat;
 import android.telephony.TelephonyManager;
-import android.text.InputType;
 import android.text.TextUtils;
-import android.text.method.MetaKeyKeyListener;
 import android.util.Log;
-import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
-import android.view.inputmethod.CompletionInfo;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
-import android.view.inputmethod.InputMethodManager;
-import android.view.inputmethod.InputMethodSubtype;
-
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static android.view.inputmethod.InputConnection.INPUT_CONTENT_GRANT_READ_URI_PERMISSION;
 import static java.lang.Math.abs;
 
 //Service
@@ -68,13 +44,16 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
     private Keyboard symbolShiftedKeyboard;
     private Keyboard smileyKeyboard;
     Keyboard mCurKeyboard;
-    Context context;
     String appName;
     boolean isSymbol = false;
     boolean isSymbolShifted=false;
     boolean isSmiley=false;
     private boolean isCaps = false;
 
+    double pressure, duration, velocity, start,end;
+    private VelocityTracker mvel = null;
+    double x_vel = 0.0, y_vel = 0.0;
+    int n_event=1,np_event=1;
 
     public static BufferedWriter out;
 
@@ -84,8 +63,6 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
         super.onCreate();
 
     }
-
-
 
     @SuppressLint({"InflateParams", "ClickableViewAccessibility"})
     @Override
@@ -100,9 +77,106 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
         isSymbol = false;
         isSymbolShifted=false;
         isSmiley = false;
+
+        kv.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int index = event.getActionIndex();
+                int pointerId = event.getPointerId(index);
+
+                //check for actions of motion event
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                  start = System.currentTimeMillis();
+                    //retrieve key at current
+                    //  start=System.currentTimeMillis();
+                    //setup velocity tracker
+                    if (mvel == null) {
+                        // Retrieve a new VelocityTracker object to watch the velocity of a motion.
+                        mvel = VelocityTracker.obtain();
+                    } else {
+                        // Reset the velocity tracker back to its initial state.
+                        mvel.clear();
+                    }
+
+                 //   mvel.addMovement(event);
+                }
+
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    mvel.addMovement(event);
+                    mvel.computeCurrentVelocity(1000);
+                    // Log velocity of pixels per second
+                    // Best practice to use VelocityTrackerCompat where possible.
+                    x_vel+= abs(VelocityTrackerCompat.getXVelocity(mvel,pointerId));
+                    y_vel += abs(VelocityTrackerCompat.getYVelocity(mvel, pointerId));
+                    n_event+=1;
+                    //  Log.d("", "X velocity: " +  x_vel);
+                    //  Log.d("", "Y velocity: " +  y_vel);
+
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    //record time when finger lifted up
+                    velocity = Math.sqrt(x_vel * x_vel + y_vel * y_vel);
+                    //obtain pressure
+                    pressure += event.getPressure();
+                    np_event+=1;
+                }
+
+                // Return false to avoid consuming the touch event
+                return false;
+            }
+        });
         return kv;
     }
 
+
+    @Override
+    public void onRelease(int primaryCode) {
+        //record time when finger lifted up
+        end = System.currentTimeMillis();
+        //calculate duration
+        duration = (end-start) / 1000;
+        pressure=pressure/np_event;
+
+        if (primaryCode == -5 || primaryCode == 32 || primaryCode == 64 || primaryCode == 42 || primaryCode == 94) {
+            @SuppressLint("SimpleDateFormat")
+            SimpleDateFormat sdf = new SimpleDateFormat(getResources().getString(R.string.time_format));
+            String currentDateandTime = sdf.format(new Date());
+            String keypress = String.valueOf((char) primaryCode );
+            String appName=getForegroundApp();
+            String keypressed = keypress;
+            if (primaryCode  == 32)
+                keypressed = "0";
+            if (primaryCode  == -5)
+                keypressed = "1";
+            if (primaryCode  == 64)
+                keypressed = "2";
+            if (primaryCode  ==94)
+                keypressed = "3";
+            if (primaryCode  == 42)
+                keypressed = "4";
+
+            Date date = new Date();
+
+            Log.d("Key Pressed ", keypress);
+            System.out.println("Ascii value: " + (int) keypress.charAt(0));
+            System.out.println("Current app : " + appName);
+            System.out.println("Timestamp: " + currentDateandTime);
+            Log.d("ans", "X velocity: " + x_vel/n_event );
+            Log.d("ans", "Y velocity: " + y_vel/n_event);
+            Log.d("ans", "velocity: " + velocity);
+            Log.d("ans", "pressure: " + pressure);
+            Log.d("ans", "duration: " + duration);
+            writeToFile(date + "," + appName + "," + keypressed+","+pressure+","+velocity+","+duration);
+
+        }
+        start = 0;
+        end = 0;
+        pressure = 0;
+        np_event = 1;
+        x_vel = 0;
+        y_vel = 0;
+        n_event = 1;
+    }
 
     private String getForegroundApp() {
         String currentApp = "NULL";
@@ -130,6 +204,7 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
             foregroundAppPackageInfo = pm.getPackageInfo(currentApp, 0);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
+            printException(e);
         }
         appName=foregroundAppPackageInfo.applicationInfo.loadLabel(pm).toString();
         return appName;
@@ -142,11 +217,6 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
 
     }
 
-    @Override
-    public void onRelease(int i) {
-
-
-    }
 
     @Override
     public void onKey(int i, int[] ints) {
@@ -154,7 +224,7 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
         InputConnection ic = getCurrentInputConnection();
         String s = "";
         playClick(i);
-
+         try
         {
             switch (i) {
                 case Keyboard.KEYCODE_DELETE: {
@@ -244,28 +314,10 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
                     }
                 }
             }
-        }
-
-        if (i == -5 || i == 32 || i == 64 || i == 42 || i == 94) {
-            @SuppressLint("SimpleDateFormat")
-            SimpleDateFormat sdf = new SimpleDateFormat(getResources().getString(R.string.time_format));
-            String currentDateandTime = sdf.format(new Date());
-            String keypress = String.valueOf((char) i);
-            String appName=getForegroundApp();
-            String keypressed = keypress;
-            if (i == -5)
-                keypressed = "backspace";
-            if (i == 32)
-                keypressed = "space";
-
-            Date date = new Date();
-
-            Log.d("Key Pressed ", keypressed);
-            System.out.println("Ascii value: " + (int) keypress.charAt(0));
-            System.out.println("Current app : " + appName);
-            System.out.println("Timestamp: " + currentDateandTime);
-            writeToFile(date + "\t" + appName + "\t" + keypressed);
-        }
+        }catch (Exception e){
+             e.printStackTrace();
+             printException(e);
+         }
 
     }
 
@@ -345,7 +397,7 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
             trace.write(report.getBytes());
             trace.close();
         } catch (IOException ioe) {
-// ...
+         ioe.printStackTrace();
         }
 
     }
@@ -365,6 +417,7 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
             LogWriter = new FileWriter(LogFile, true);
         } catch (IOException e) {
             e.printStackTrace();
+            printException(e);
         }
         out = new BufferedWriter(LogWriter);
         try {
@@ -372,6 +425,7 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
+            printException(e);
         }
 
     }

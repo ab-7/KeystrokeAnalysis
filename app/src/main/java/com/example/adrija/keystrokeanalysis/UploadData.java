@@ -12,7 +12,6 @@ import android.os.Looper;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
-
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,7 +39,7 @@ public class UploadData extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
-            upLoadServerUri = getString(R.string.affectsense_server_uri)+getString(R.string.upload_data_page);
+            upLoadServerUri = getString(R.string.keystrokeanalysis_server_uri)+getString(R.string.upload_data_page);
             ConnectivityManager cm =
                     (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -51,19 +50,15 @@ public class UploadData extends IntentService {
             if(isConnected) {
                 File sdCardRoot = Environment.getExternalStorageDirectory();
                 File dataDir = new File(sdCardRoot, getString(R.string.data_file_path));
-                File zipDir = new File(sdCardRoot, getString(R.string.affectsense_file_path));
+                File zipDir = new File(sdCardRoot, getString(R.string.keystrokeanalysis_file_path));
                 System.out.println("Path Testing :--- "+dataDir);
                 TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
                 String imei_no = telephonyManager.getDeviceId();
-                String zip_file_ctr = RetrieveZipFileCtr();
-                System.out.println(zip_file_ctr);
-                final String filepath = zipDir + "/" +imei_no + "_" + zip_file_ctr + "_datafiles.zip";
+                final String filepath = zipDir + "/" +imei_no + "_datafiles.zip";
                 File outputFile = new File(filepath);
                 try {
                     packZip(outputFile, dataDir);
                     uploadFile(filepath);
-                    int ctr = (Integer.parseInt(zip_file_ctr) + 1);
-                    StoreZipFileCtr(String.valueOf(ctr));
                     if (outputFile.delete())
                         System.out.println("File Delete");
                     else
@@ -85,25 +80,6 @@ public class UploadData extends IntentService {
         }
     }
 
-    private void StoreZipFileCtr(String ctr) {
-        SharedPreferences pref = getApplicationContext().getSharedPreferences(getResources().getString(R.string.ctr_sharedpref_file), Context.MODE_MULTI_PROCESS);
-        SharedPreferences.Editor log_editor =pref.edit();
-        log_editor.putString(getResources().getString(R.string.zip_file_ctr), ctr);
-        log_editor.apply();
-        log_editor.commit();
-    }
-    private String RetrieveZipFileCtr() {
-        String ctr="0";
-        try {
-            Context con = getApplicationContext().createPackageContext(getResources().getString(R.string.ctr_pkg), Context.CONTEXT_IGNORE_SECURITY);
-            SharedPreferences pref = con.getSharedPreferences(getResources().getString(R.string.ctr_sharedpref_file), Context.MODE_MULTI_PROCESS);
-            ctr = pref.getString(getResources().getString(R.string.zip_file_ctr), "0");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return ctr;
-    }
 
     public static void packZip(File output, File source) throws IOException {
         System.out.println("Packaging to " + output.getName());
@@ -147,7 +123,6 @@ public class UploadData extends IntentService {
                 zipFile(zos, path, source);
             }
         }
-        //System.out.println("Leaving Directory " + path);
     }
 
     //For Files
@@ -160,7 +135,6 @@ public class UploadData extends IntentService {
             System.out.println("Skipping " + file.getName());
             return;
         }
-        //System.out.println("Compressing " + file.getName());
         zos.putNextEntry(new ZipEntry(buildPath(path, file.getName())));
 
         FileInputStream fis = new FileInputStream(file);
@@ -169,11 +143,7 @@ public class UploadData extends IntentService {
         int byteCount = 0;
         while ((byteCount = fis.read(buffer)) != -1) {
             zos.write(buffer, 0, byteCount);
-            //System.out.print('.');
-            //System.out.flush();
         }
-        //System.out.println();
-
         fis.close();
         zos.closeEntry();
     }
@@ -282,27 +252,10 @@ public class UploadData extends IntentService {
             } catch (MalformedURLException ex) {
 
                 ex.printStackTrace();
-
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Toast.makeText(UploadData.this, "MalformedURLException", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
                 Log.e("Upload file to server", "error: " + ex.getMessage(), ex);
             } catch (Exception e) {
 
                 e.printStackTrace();
-
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Toast.makeText(UploadData.this, "Got Exception : see logcat ", Toast.LENGTH_SHORT).show();
-                    }
-                });
                 System.out.println("Upload file to server Exception" + "\nException : " + e.getMessage() + "\n\n" + e);
             }
             return serverResponseCode;
