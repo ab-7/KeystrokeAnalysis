@@ -166,7 +166,7 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
             Log.d("ans", "velocity: " + velocity);
             Log.d("ans", "pressure: " + pressure);
             Log.d("ans", "duration: " + duration);
-            writeToFile(date + "," + appName + "," + keypressed+","+pressure+","+velocity+","+duration);
+            writeToFile(date + "," + appName + "," + keypressed+","+pressure+","+velocity+","+duration+",");
 
         }
         start = 0;
