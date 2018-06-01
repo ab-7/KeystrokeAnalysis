@@ -87,8 +87,6 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
                 //check for actions of motion event
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                   start = System.currentTimeMillis();
-                    //retrieve key at current
-                    //  start=System.currentTimeMillis();
                     //setup velocity tracker
                     if (mvel == null) {
                         // Retrieve a new VelocityTracker object to watch the velocity of a motion.
@@ -98,7 +96,6 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
                         mvel.clear();
                     }
 
-                 //   mvel.addMovement(event);
                 }
 
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -109,9 +106,6 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
                     x_vel+= abs(VelocityTrackerCompat.getXVelocity(mvel,pointerId));
                     y_vel += abs(VelocityTrackerCompat.getYVelocity(mvel, pointerId));
                     n_event+=1;
-                    //  Log.d("", "X velocity: " +  x_vel);
-                    //  Log.d("", "Y velocity: " +  y_vel);
-
                 }
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     //record time when finger lifted up
