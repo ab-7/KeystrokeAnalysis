@@ -1,4 +1,4 @@
-package com.example.adrija.keystrokeanalysis;
+package research.type.keystrokeanalysis;
 
 import org.junit.Test;
 

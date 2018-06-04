@@ -1,4 +1,4 @@
-package com.example.adrija.keystrokeanalysis;
+package research.type.keystrokeanalysis.services;
 
 
 import android.annotation.SuppressLint;
@@ -32,6 +32,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import research.type.keystrokeanalysis.R;
+
 import static java.lang.Math.abs;
 
 //Service
@@ -51,7 +54,7 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
     private boolean isCaps = false;
 
     double pressure, duration, velocity, start,end;
-    private VelocityTracker mvel = null;
+    private VelocityTracker mvelocity = null;
     double x_vel = 0.0, y_vel = 0.0;
     int n_event=1,np_event=1;
 
@@ -88,23 +91,23 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                   start = System.currentTimeMillis();
                     //setup velocity tracker
-                    if (mvel == null) {
+                    if (mvelocity == null) {
                         // Retrieve a new VelocityTracker object to watch the velocity of a motion.
-                        mvel = VelocityTracker.obtain();
+                        mvelocity = VelocityTracker.obtain();
                     } else {
                         // Reset the velocity tracker back to its initial state.
-                        mvel.clear();
+                        mvelocity.clear();
                     }
 
                 }
 
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    mvel.addMovement(event);
-                    mvel.computeCurrentVelocity(1000);
+                    mvelocity.addMovement(event);
+                    mvelocity.computeCurrentVelocity(1000);
                     // Log velocity of pixels per second
                     // Best practice to use VelocityTrackerCompat where possible.
-                    x_vel+= abs(VelocityTrackerCompat.getXVelocity(mvel,pointerId));
-                    y_vel += abs(VelocityTrackerCompat.getYVelocity(mvel, pointerId));
+                    x_vel+= abs(VelocityTrackerCompat.getXVelocity(mvelocity,pointerId));
+                    y_vel += abs(VelocityTrackerCompat.getYVelocity(mvelocity, pointerId));
                     n_event+=1;
                 }
                 if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -160,7 +163,7 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
             Log.d("ans", "velocity: " + velocity);
             Log.d("ans", "pressure: " + pressure);
             Log.d("ans", "duration: " + duration);
-            writeToFile(date + "," + appName + "," + keypressed+","+pressure+","+velocity+","+duration+",");
+            writeToFile(date + "," + appName + "," + keypressed+","+pressure+","+velocity+","+duration);
 
         }
         start = 0;

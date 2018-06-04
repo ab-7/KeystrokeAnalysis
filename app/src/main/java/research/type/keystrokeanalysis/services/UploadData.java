@@ -1,4 +1,4 @@
-package com.example.adrija.keystrokeanalysis;
+package research.type.keystrokeanalysis.services;
 
 import android.app.IntentService;
 import android.content.Context;
@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import research.type.keystrokeanalysis.R;
 
 public class UploadData extends IntentService {
 

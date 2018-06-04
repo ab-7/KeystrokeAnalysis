@@ -1,14 +1,7 @@
 <resources>
     <string name="app_name">KeystrokeAnalysis</string>
-    <string name="quot">"</string>
-    <string name="describe">Describe</string>
-    <string name="date_format">dd-MM-yyyy</string>
     <string name="time_format">yyyy-MM-dd HH:mm:ss.SSS</string>
     <string name="infotext">Use the CustomKeyboard as the default one\n\nThe keys that are logged are-\nspace, backspace, @, ^, *\n\n<b>No text is captured</b></string>
-
-    <string name="label_go_key">Go</string>
-    <string name="label_next_key">Next</string>
-    <string name="label_send_key">Send</string>
 
     <string name="data_file_path">/KeystrokeAnalysis/DataFiles/</string>
     <string name="log_file_path">Log/</string>
@@ -17,16 +10,10 @@
     <string name="keystrokeanalysis_file_path">/KeystrokeAnalysis/</string>
     <string name="upload_data_page">UploadToServer.php</string>
 
-    <string name="server_uri">http://www.cnergres.iitkgp.ac.in/projects/type2motion/</string>
     <string name="keystrokeanalysis_server_uri">http://www.cnergres.iitkgp.ac.in/projects/type2motion/KeystrokeAnalysis/</string>
 
-    <string name="user_details_file">UserDetailsSharedPref</string>
-    <string name="user_name">UserName</string>
-    <string name="ctr_pkg">com.example.adrija.keystrokeanalysis</string>
     <string name="sharedpref_file">EDAppSharedPref</string>
     <string name="upload_data_interval">6</string>
     <string name="upload_data_timestamp">UploadDataTimeStamp</string>
-    <string name="ctr_sharedpref_file">CtrSharedPref</string>
-    <string name="zip_file_ctr">ZipFileCtr</string>
 
 </resources>

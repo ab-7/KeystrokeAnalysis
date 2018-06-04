@@ -1,4 +1,4 @@
-package com.example.adrija.keystrokeanalysis;
+package research.type.keystrokeanalysis;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 
-import static com.example.adrija.keystrokeanalysis.R.layout.user_consent;
+import static research.type.keystrokeanalysis.R.layout.user_consent;
 
 /**
  * Created by Adrija on 19-05-2018.
@@ -22,7 +22,7 @@ public class UserConsent extends AppCompatActivity{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(user_consent);
+        setContentView(R.layout.user_consent);
 
         grUsAcc=findViewById(R.id.btnGrant_usage_access_settings);
         enInSet=findViewById(R.id.btnEnable_in_settings);
