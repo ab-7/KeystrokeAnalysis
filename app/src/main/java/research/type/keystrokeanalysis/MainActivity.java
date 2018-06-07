@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         if(sdCardRoot.canWrite()){
             Date date = new Date();
-            String date1=date.getDate()+"-"+date.getMonth()+"-"+date.getYear();
+            String date1 = date.getDate() + "-" + date.getMonth() + "-" + date.getYear();
             String LogFileName = imei_no + " " + date1 + " Log.txt";
             File LogFile = new File(logDir, LogFileName);
             FileWriter LogWriter = null;
