@@ -5,13 +5,17 @@ import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
+import android.media.MediaRecorder;
 import android.os.Environment;
 import android.support.v4.view.VelocityTrackerCompat;
 import android.telephony.TelephonyManager;
@@ -22,6 +26,7 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.inputmethod.InputConnection;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,6 +40,7 @@ import java.util.TreeMap;
 
 import research.type.keystrokeanalysis.R;
 
+import static com.google.android.gms.wearable.DataMap.TAG;
 import static java.lang.Math.abs;
 
 //Service
@@ -52,14 +58,22 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
     boolean isSymbolShifted=false;
     boolean isSmiley=false;
     private boolean isCaps = false;
+    Date prev_tap_time=null,curr_tap_time=null;
+    int amplitude;double dB;
+    int ifStatic=0,ifWalking=0,ifVehicle=0;
 
     double pressure, duration, velocity, start,end;
     private VelocityTracker mvelocity = null;
     double x_vel = 0.0, y_vel = 0.0;
     int n_event=1,np_event=1;
-
+Context mContext;
     public static BufferedWriter out;
-
+    private MediaRecorder mRecorder = null;
+    private static final String LOG_TAG = "AudioRecordTest";
+    private static String mFileName = null;
+    boolean timerrecieved=false;
+    File path;
+    Date timerStartTime;
 
     @Override
     public void onCreate() {
@@ -80,6 +94,7 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
         isSymbol = false;
         isSymbolShifted=false;
         isSmiley = false;
+        registerReceiver(br, new IntentFilter(TimerService.COUNTDOWN_BR));
 
         kv.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -89,7 +104,6 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
 
                 //check for actions of motion event
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                  start = System.currentTimeMillis();
                     //setup velocity tracker
                     if (mvelocity == null) {
                         // Retrieve a new VelocityTracker object to watch the velocity of a motion.
@@ -129,9 +143,9 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
     @Override
     public void onRelease(int primaryCode) {
         //record time when finger lifted up
-        end = System.currentTimeMillis();
         //calculate duration
-        duration = (end-start) / 1000;
+        end = System.nanoTime();
+        duration = (end-start)/1000000 ;
         pressure=pressure/np_event;
 
         if (primaryCode == -5 || primaryCode == 32 || primaryCode == 64 || primaryCode == 42 || primaryCode == 94) {
@@ -152,22 +166,23 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
             if (primaryCode  == 42)
                 keypressed = "4";
 
-            Date date = new Date();
+         //   Date date = new Date();
 
             Log.d("Key Pressed ", keypress);
             System.out.println("Ascii value: " + (int) keypress.charAt(0));
             System.out.println("Current app : " + appName);
             System.out.println("Timestamp: " + currentDateandTime);
+            System.out.println("Duration: " + start+","+end+","+duration);
             Log.d("ans", "X velocity: " + x_vel/n_event );
             Log.d("ans", "Y velocity: " + y_vel/n_event);
             Log.d("ans", "velocity: " + velocity);
             Log.d("ans", "pressure: " + pressure);
             Log.d("ans", "duration: " + duration);
-            writeToFile(date + "," + appName + "," + keypressed+","+pressure+","+velocity+","+duration);
+            writeToFile(currentDateandTime+ "," + appName + "," + keypressed+","+pressure+","+velocity+","+duration);
 
         }
-        start = 0;
-        end = 0;
+    /* start = 0;
+        end = 0;*/
         pressure = 0;
         np_event = 1;
         x_vel = 0;
@@ -210,9 +225,107 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
 
     @Override
     public void onPress(int i) {
+        prev_tap_time=curr_tap_time;
+        curr_tap_time=new Date();
+        long difference=0;int days1,hours1,min=0;
+        if(prev_tap_time!=null)
+        { difference = curr_tap_time.getTime() - prev_tap_time.getTime();
+        days1 = (int) (difference / (1000*60*60*24));
+        hours1 = (int) ((difference - (1000*60*60*24*days1)) / (1000*60*60));
+        min = (int) (difference - (1000*60*60*24*days1) - (1000*60*60*hours1)) / (1000*60);}
+      if(prev_tap_time==null || min>=1 )
+      {
+          if(!timerrecieved && prev_tap_time!=null)
+          {File file = new File(path+"/"+mFileName);
+              mRecorder.stop();
+              mRecorder.reset();
+              mRecorder.release();
+          file.delete();}
+          startService(new Intent(this, TimerService.class));
+        Log.i(TAG, "Started service");
+      startRecording();
+      timerrecieved=false;}
+
+        start = System.nanoTime();
+
+    }
+
+    private BroadcastReceiver br = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            long millisUntilFinished=11000;
+            if (intent.getExtras() != null) {
+                 millisUntilFinished = intent.getLongExtra("countdown", 0);}
+            timerrecieved=true;
+                    Log.i(TAG, "Timer received");
+                   stopRecording();
+
+        }
+    };
+
+    private void startRecording() {
+       timerStartTime=new Date();
+       mFileName=timerStartTime.getDate() + "-" + timerStartTime.getMonth() + "-" + timerStartTime.getYear()+"_"+timerStartTime.getHours()+":"+timerStartTime.getMinutes()+":"+timerStartTime.getSeconds()+"_audio"+".mp3";
+        File sdCardRoot = Environment.getExternalStorageDirectory();
+       path = new File(sdCardRoot, "/KeystrokeAnalysis/DataFiles/Audio/");
+        boolean exists = (new File(String.valueOf(path))).exists();
+        if (!exists){new File(String.valueOf(path)).mkdirs();}
+        mRecorder = new MediaRecorder();
+        mRecorder.setAudioSamplingRate(8000);
+        mRecorder.setAudioEncodingBitRate(16);
+        mRecorder.setAudioChannels(1);
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        mRecorder.setOutputFile(path+"/"+mFileName );
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        try {
+            mRecorder.prepare();
+            mRecorder.start();
+            mRecorder.getMaxAmplitude();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "prepare() failed");
+        }
 
 
     }
+
+    private void stopRecording() {
+        Log.i(TAG, "Recorder released");
+        stopService(new Intent(this, TimerService.class));
+        amplitude=mRecorder.getMaxAmplitude();
+        dB=20 * Math.log10(amplitude );
+        mRecorder.stop();
+        mRecorder.reset();
+        mRecorder.release();
+       Log.d("Amplitude","amp-"+dB);
+        if(dB>60) {
+            ifStatic = 1;
+            ifVehicle=4;
+        }
+        else {
+            ifStatic = 2;
+         if (dB >= 40 && dB<= 60)
+                ifVehicle=5;
+            else
+               ifVehicle=6;
+        }
+        ifWalking=3;
+        writeToAudioFile(timerStartTime+","+dB+","+ifStatic+","+ifWalking+","+ifVehicle);
+        File file= new File(path + "/" + mFileName);
+        file.delete();
+        mRecorder = null;
+    }
+
+
+    @Override
+    public void onDestroy() {
+        stopService(new Intent(this, TimerService.class));
+        Log.i(TAG, "Stopped service");
+        super.onDestroy();
+    }
+
+
+
 
 
     @Override
@@ -409,6 +522,29 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
         File logDir = new File(sdCardRoot, "/KeystrokeAnalysis/DataFiles/Log/");
         String LogFileName = imei_no + " " + date1 + " Log.txt";
         File LogFile = new File(logDir, LogFileName);
+        FileWriter LogWriter = null;
+        try {
+            LogWriter = new FileWriter(LogFile, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+            printException(e);
+        }
+        out = new BufferedWriter(LogWriter);
+        try {
+            out.write(message + "\n");
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            printException(e);
+        }
+
+    }
+
+    public void writeToAudioFile(String message) {
+        File sdCardRoot = Environment.getExternalStorageDirectory();
+        File Dir = new File(sdCardRoot, "/KeystrokeAnalysis/DataFiles/");
+        String LogFileName ="Audio.txt";
+        File LogFile = new File(Dir, LogFileName);
         FileWriter LogWriter = null;
         try {
             LogWriter = new FileWriter(LogFile, true);

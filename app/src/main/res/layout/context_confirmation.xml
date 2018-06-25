@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="5dp"
+        android:text="
+"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="16sp"
+        tools:ignore="RtlHardcoded" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:text="In the first hour-"
+        android:textSize="16sp"
+        android:layout_marginBottom="10dp"
+        tools:ignore="RtlHardcoded" />
+
+
+    <RadioGroup
+        android:id="@+id/radioContextGroup1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="RtlHardcoded"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radioContext11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Static (Formal gathering)"
+            android:textSize="16sp"
+            tools:layout_editor_absoluteX="-5dp"
+            tools:layout_editor_absoluteY="73dp" />
+
+        <RadioButton
+            android:id="@+id/radioContext12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Static (Informal gathering)"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/radioContext13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Walking Alone"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/radioContext14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Walking in a Group"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/radioContext15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="In vehicle (3-wheeler)"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/radioContext16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="In vehicle (4-wheeler)"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/radioContext17"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="In vehicle (Train)"
+            android:textSize="16sp" />
+
+
+
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:text="Confidence Level-"
+        android:textSize="16sp"
+        tools:ignore="RtlHardcoded" />
+
+    <RadioGroup
+        android:id="@+id/radioConfidenceGroup1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="RtlHardcoded"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radioConfidence11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0-50"
+            android:textSize="16sp"
+            tools:layout_editor_absoluteX="-5dp"
+            tools:layout_editor_absoluteY="73dp" />
+
+        <RadioButton
+            android:id="@+id/radioConfidence12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="50-70"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/radioConfidence13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="70-100"
+            android:textSize="16sp" />
+    </RadioGroup>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:text="DONE"
+        android:textSize="12sp"
+        android:id="@+id/btnDone1"
+        android:textColor="#ffffff"
+       android:background="@color/colorPrimary"/>
+
+
+</LinearLayout>

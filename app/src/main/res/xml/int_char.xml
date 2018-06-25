@@ -65,7 +65,7 @@
         <Key android:keyLabel="," android:codes="44"/>
         <Key android:keyLabel="\-" android:codes="45"/>
         <Key android:keyIcon="@drawable/sym_keyboard_space"  android:keyWidth="26%p" android:isRepeatable="true" android:codes="32"/>
-        <Key android:keyLabel="." android:codes="46"/>
+        <Key android:keyLabel="." android:codes="46" />
         <Key android:keyIcon="@drawable/sym_keyboard_return"  android:keyWidth="21%p" android:keyEdgeFlags="right" android:codes="-4"/>
     </Row>
 

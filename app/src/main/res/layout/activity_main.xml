@@ -52,4 +52,14 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/btnStop_service"/>
 
+    <TextView
+        android:id="@+id/lastupdated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:textSize="15dp"
+        android:textColor="#000000"/>
+
 </RelativeLayout>

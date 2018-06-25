@@ -4,8 +4,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.google.android.gms.location.ActivityRecognitionResult;
@@ -16,15 +14,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import research.type.keystrokeanalysis.R;
+
 
 /**
  * Created by soumya on 24/3/18.
  */
 
 public class ActivityService extends IntentService {
+
+    static DetectedActivity activity;
 
     public ActivityService() {
         super("ActivityRecognizedService");
@@ -47,11 +47,12 @@ public class ActivityService extends IntentService {
 
         }
     }
+
     private void handleDetectedActivities(DetectedActivity mostProbableActivities) {
         try {
             String activityData = "";
             double confidence=0.0;
-            DetectedActivity activity=mostProbableActivities;
+             activity=mostProbableActivities;
             switch (activity.getType()) {
                 case DetectedActivity.IN_VEHICLE: {
                     confidence=activity.getConfidence();
@@ -129,5 +130,12 @@ public class ActivityService extends IntentService {
 
         }
     }
+
+  /*  public static DetectedActivity retActivity(){
+        return activity;
+    }*/
+
+
+
 }
 

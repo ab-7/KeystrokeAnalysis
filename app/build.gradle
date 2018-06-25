@@ -9,6 +9,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -32,11 +33,13 @@ dependencies {
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
 
-    compile 'com.google.android.gms:play-services-location:9.0.1'
-    compile 'com.google.android.gms:play-services:9.0.1'
 
-    implementation 'com.google.android.gms:play-services-location:9.0.1'
-    implementation 'com.google.android.gms:play-services:9.0.1'
+   compile 'com.google.android.gms:play-services-location:12.0.1'
+    compile 'com.google.android.gms:play-services:12.0.1'
+
+    implementation 'com.google.android.gms:play-services-location:12.0.1'
+  implementation 'com.google.android.gms:play-services:12.0.1'
+
 
 
 }

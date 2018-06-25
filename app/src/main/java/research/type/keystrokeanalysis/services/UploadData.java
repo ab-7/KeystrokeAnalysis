@@ -26,11 +26,14 @@ import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import research.type.keystrokeanalysis.LastUploaded;
+import research.type.keystrokeanalysis.MainActivity;
 import research.type.keystrokeanalysis.R;
 
 public class UploadData extends IntentService {
-
+  public int lupdata=0;
     int serverResponseCode = 0;
+    public Date curr_time;
 
     String upLoadServerUri;
 
@@ -70,6 +73,7 @@ public class UploadData extends IntentService {
                 }
             }
             else {
+                lupdata=0;
                 System.out.println("Connect to Internet to Upload Data");
                 Handler handler = new Handler(Looper.getMainLooper());
                 handler.post(new Runnable() {
@@ -97,6 +101,7 @@ public class UploadData extends IntentService {
         zipOut.flush();
         zipOut.close();
         System.out.println("Done");
+
     }
 
     private static String buildPath(String path, String file) {
@@ -227,7 +232,8 @@ public class UploadData extends IntentService {
                 // Responses from the server (code and message)
                 serverResponseCode = conn.getResponseCode();
                 String serverResponseMessage = conn.getResponseMessage();
-
+                LastUploaded appState =new LastUploaded();
+                appState.setLupdata(0);
                  Log.i("uploadFile", "HTTP Response is : " + serverResponseMessage + ": " + serverResponseCode);
 
                 if (serverResponseCode == 200) {
@@ -235,9 +241,13 @@ public class UploadData extends IntentService {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
+
                             Toast.makeText(UploadData.this, "File Upload Completed", Toast.LENGTH_SHORT).show();
                         }
                     });
+                    lupdata=1;
+
+                       appState.setLupdata(1);
                 }
 
                 //close the streams //
@@ -246,8 +256,9 @@ public class UploadData extends IntentService {
                 dos.close();
 
                 long upload_data_interval = 1000 * 60 * 60 * Integer.parseInt(getResources().getString(R.string.upload_data_interval));
-
-                Date curr_time = new Date();
+                 curr_time = new Date();
+                appState.setCurrTime(curr_time);
+                MainActivity.storeLastDate(appState);
                 Date next_upload_data_time = new Date(curr_time.getTime() + upload_data_interval);
                 store_time(getString(R.string.upload_data_timestamp), next_upload_data_time);
 
@@ -274,6 +285,7 @@ public class UploadData extends IntentService {
         eda_editor.commit();
 
     }
+
 
     public String convert_to_string(Date date) {
 
