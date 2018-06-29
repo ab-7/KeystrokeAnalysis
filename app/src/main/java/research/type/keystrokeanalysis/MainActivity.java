@@ -21,14 +21,12 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.ActivityRecognitionClient;
-import com.google.android.gms.location.ActivityTransition;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 
 import research.type.keystrokeanalysis.services.ActivityService;
 import research.type.keystrokeanalysis.services.NotificationHelper;
@@ -41,10 +39,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     Button startApp,stopApp;
     public static BufferedWriter out;
     public GoogleApiClient mApiClient;
-    private List<ActivityTransition> transitions;
     private ActivityRecognitionClient activityRecognitionClient;
     private PendingIntent transitionPendingIntent;
-    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private final int MY_PERMISSIONS_RECORD_AUDIO = 1;
     private Context mContext;
     TextView t;
@@ -163,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onClick(View view) {
                 Intent intent=new Intent(MainActivity.this,UserConsent.class);
                 startActivity(intent);
-               // NotificationHelper.scheduleRepeatingRTCNotification(mContext);
 
             }
         });
@@ -173,7 +168,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onClick(View view) {
 
               /* stopService(new Intent(getBaseContext(),CustomKeyboard.class));*/
-               // Date date=new Date();
                 Intent intent = new Intent(MainActivity.this,UploadData.class);
                  startService(intent);
                  if(uploaded==1)

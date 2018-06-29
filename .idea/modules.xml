@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/KeystrokeAnalysis.iml" filepath="$PROJECT_DIR$/KeystrokeAnalysis.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jAudio-1.0.4/jAudio-1.0.4.iml" filepath="$PROJECT_DIR$/jAudio-1.0.4/jAudio-1.0.4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jMusic1.6.5/jMusic1.6.5.iml" filepath="$PROJECT_DIR$/jMusic1.6.5/jMusic1.6.5.iml" />
     </modules>
   </component>
 </project>

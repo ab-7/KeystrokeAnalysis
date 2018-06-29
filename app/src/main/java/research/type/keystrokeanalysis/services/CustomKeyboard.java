@@ -14,7 +14,9 @@ import android.content.pm.PackageManager;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.media.AudioFormat;
 import android.media.AudioManager;
+import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.support.v4.view.VelocityTrackerCompat;
@@ -38,6 +40,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import research.type.keystrokeanalysis.GroupAudioDetector;
 import research.type.keystrokeanalysis.R;
 
 import static com.google.android.gms.wearable.DataMap.TAG;
@@ -68,12 +71,27 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
     int n_event=1,np_event=1;
 Context mContext;
     public static BufferedWriter out;
-    private MediaRecorder mRecorder = null;
     private static final String LOG_TAG = "AudioRecordTest";
     private static String mFileName = null;
     boolean timerrecieved=false;
     File path;
     Date timerStartTime;
+
+
+
+
+    private static final int RECORDER_SAMPLERATE = 8000;
+    private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
+    private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
+    private AudioRecord mRecorder = null;
+    private Thread recordingThread = null;
+    private boolean isRecording = false;
+    int bufferSize = AudioRecord.getMinBufferSize(RECORDER_SAMPLERATE,
+            RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
+    int BufferElements2Rec = 80000; // want to play 2048 (2K) since 2 bytes we use only 1024
+    int BytesPerElement = 2; // 2 bytes in 16bit format
+    short data[] = new short[BufferElements2Rec];
+
 
     @Override
     public void onCreate() {
@@ -237,9 +255,13 @@ Context mContext;
       {
           if(!timerrecieved && prev_tap_time!=null)
           {File file = new File(path+"/"+mFileName);
-              mRecorder.stop();
-              mRecorder.reset();
-              mRecorder.release();
+              if (null != mRecorder) {
+                  isRecording = false;
+                  mRecorder.stop();
+                  mRecorder.release();
+                  mRecorder = null;
+                  recordingThread = null;
+              }
           file.delete();}
           startService(new Intent(this, TimerService.class));
         Log.i(TAG, "Started service");
@@ -264,27 +286,25 @@ Context mContext;
 
     private void startRecording() {
        timerStartTime=new Date();
-       mFileName=timerStartTime.getDate() + "-" + timerStartTime.getMonth() + "-" + timerStartTime.getYear()+"_"+timerStartTime.getHours()+":"+timerStartTime.getMinutes()+":"+timerStartTime.getSeconds()+"_audio"+".mp3";
-        File sdCardRoot = Environment.getExternalStorageDirectory();
-       path = new File(sdCardRoot, "/KeystrokeAnalysis/DataFiles/Audio/");
-        boolean exists = (new File(String.valueOf(path))).exists();
-        if (!exists){new File(String.valueOf(path)).mkdirs();}
-        mRecorder = new MediaRecorder();
-        mRecorder.setAudioSamplingRate(8000);
-        mRecorder.setAudioEncodingBitRate(16);
-        mRecorder.setAudioChannels(1);
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mRecorder.setOutputFile(path+"/"+mFileName );
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mRecorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
+                RECORDER_SAMPLERATE, RECORDER_CHANNELS,
+                RECORDER_AUDIO_ENCODING, BufferElements2Rec * BytesPerElement);
 
-        try {
-            mRecorder.prepare();
-            mRecorder.start();
-            mRecorder.getMaxAmplitude();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
-        }
+        mRecorder.startRecording();
+        isRecording = true;
+      /*  recordingThread = new Thread(new Runnable() {
+            public void run() {
+                writeAudioDataToFile();
+            }
+        }, "AudioRecorder Thread");*/
+         data = new short[BufferElements2Rec];
+        recordingThread = new Thread(new Runnable() {
+            public void run() {
+                while(isRecording)
+                mRecorder.read(data, 0, BufferElements2Rec);
+            }
+        }, "AudioRecorder Thread");
+        recordingThread.start();
 
 
     }
@@ -292,30 +312,56 @@ Context mContext;
     private void stopRecording() {
         Log.i(TAG, "Recorder released");
         stopService(new Intent(this, TimerService.class));
-        amplitude=mRecorder.getMaxAmplitude();
+        double[] samples=convertShortToDoubleArray(data);
+        amplitude=(int)getMaxAmplitude(samples);
         dB=20 * Math.log10(amplitude );
-        mRecorder.stop();
-        mRecorder.reset();
-        mRecorder.release();
+        if (null != mRecorder) {
+            isRecording = false;
+            mRecorder.stop();
+            mRecorder.release();
+            mRecorder = null;
+            recordingThread = null;
+        }
        Log.d("Amplitude","amp-"+dB);
         if(dB>60) {
             ifStatic = 1;
-            ifVehicle=4;
+            ifVehicle=5;
         }
         else {
             ifStatic = 2;
          if (dB >= 40 && dB<= 60)
-                ifVehicle=5;
+                ifVehicle=6;
             else
-               ifVehicle=6;
+               ifVehicle=7;
         }
-        ifWalking=3;
+
+        boolean isGroup= GroupAudioDetector.isGroupFunc(samples);
+        if(isGroup)
+           ifWalking=4;
+        else
+            ifWalking=3;
         writeToAudioFile(timerStartTime+","+dB+","+ifStatic+","+ifWalking+","+ifVehicle);
         File file= new File(path + "/" + mFileName);
-        file.delete();
+       // file.delete();
         mRecorder = null;
     }
 
+    public static double getMaxAmplitude(double[] arr){
+        double max=Double.NEGATIVE_INFINITY;
+        for(int i=0;i<arr.length;i++){
+            if(max<arr[i])
+                max=arr[i];
+        }
+        return(max);
+    }
+
+    public static double[] convertShortToDoubleArray(short[] arr){
+        double[] out=new double[arr.length];
+        for(int i=0;i<arr.length;i++){
+            out[i]=(double)arr[i];
+        }
+        return(out);
+    }
 
     @Override
     public void onDestroy() {
@@ -323,8 +369,6 @@ Context mContext;
         Log.i(TAG, "Stopped service");
         super.onDestroy();
     }
-
-
 
 
 
@@ -562,6 +606,8 @@ Context mContext;
         }
 
     }
+
+
 
 }
 

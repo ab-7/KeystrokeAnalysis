@@ -131,11 +131,6 @@ public class ActivityService extends IntentService {
         }
     }
 
-  /*  public static DetectedActivity retActivity(){
-        return activity;
-    }*/
-
-
 
 }
 
