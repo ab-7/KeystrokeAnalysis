@@ -65,7 +65,7 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
     int amplitude;double dB;
     int ifStatic=0,ifWalking=0,ifVehicle=0;
 
-    double pressure, duration, velocity, start,end;
+    double pressure=0.0, duration, velocity, start,end;
     private VelocityTracker mvelocity = null;
     double x_vel = 0.0, y_vel = 0.0;
     int n_event=1,np_event=1;
@@ -130,7 +130,9 @@ Context mContext;
                         // Reset the velocity tracker back to its initial state.
                         mvelocity.clear();
                     }
-
+                    //obtain pressure
+                    pressure = event.getPressure();
+                    np_event += 1;
                 }
 
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -145,9 +147,6 @@ Context mContext;
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     //record time when finger lifted up
                     velocity = Math.sqrt(x_vel * x_vel + y_vel * y_vel);
-                    //obtain pressure
-                    pressure += event.getPressure();
-                    np_event+=1;
                 }
 
                 // Return false to avoid consuming the touch event
@@ -164,7 +163,7 @@ Context mContext;
         //calculate duration
         end = System.nanoTime();
         duration = (end-start)/1000000 ;
-        pressure=pressure/np_event;
+      //  pressure=pressure/np_event;
 
         if (primaryCode == -5 || primaryCode == 32 || primaryCode == 64 || primaryCode == 42 || primaryCode == 94) {
             @SuppressLint("SimpleDateFormat")
@@ -201,12 +200,13 @@ Context mContext;
         }
     /* start = 0;
         end = 0;*/
-        pressure = 0;
-        np_event = 1;
         x_vel = 0;
         y_vel = 0;
         n_event = 1;
+        pressure = 0;
+        np_event = 1;
     }
+
 
     private String getForegroundApp() {
         String currentApp = "NULL";
