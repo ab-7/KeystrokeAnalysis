@@ -66,6 +66,7 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
     int ifStatic=0,ifWalking=0,ifVehicle=0;
 
     double pressure=0.0, duration, velocity, start,end;
+    double prev_pressure=0.0;
     private VelocityTracker mvelocity = null;
     double x_vel = 0.0, y_vel = 0.0;
     int n_event=1,np_event=1;
@@ -76,6 +77,7 @@ Context mContext;
     boolean timerrecieved=false;
     File path;
     Date timerStartTime;
+    int prev_primary_code;
 
 
 
@@ -164,6 +166,8 @@ Context mContext;
         end = System.nanoTime();
         duration = (end-start)/1000000 ;
       //  pressure=pressure/np_event;
+        if(prev_primary_code==primaryCode && pressure==0)
+            pressure=prev_pressure;
 
         if (primaryCode == -5 || primaryCode == 32 || primaryCode == 64 || primaryCode == 42 || primaryCode == 94) {
             @SuppressLint("SimpleDateFormat")
@@ -200,6 +204,8 @@ Context mContext;
         }
     /* start = 0;
         end = 0;*/
+    prev_pressure=pressure;
+    prev_primary_code=primaryCode;
         x_vel = 0;
         y_vel = 0;
         n_event = 1;
