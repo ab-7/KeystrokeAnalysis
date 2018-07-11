@@ -159,6 +159,8 @@ Context mContext;
     }
 
 
+
+
     @Override
     public void onRelease(int primaryCode) {
         //record time when finger lifted up

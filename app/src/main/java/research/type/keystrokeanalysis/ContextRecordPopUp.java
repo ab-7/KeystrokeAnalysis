@@ -26,7 +26,7 @@ import java.util.Date;
 public class ContextRecordPopUp extends AppCompatActivity {
 
 
-RadioButton rb1,rb2,rb3,rb4,rb5,rb6,rb7,rb11,rb12,rb13;
+RadioButton rb1,rb2,rb3,rb4,rb5,rb6,rb7,rb8,rb11,rb12,rb13;
     int selId1,selId2,selId3,selId4,selConId1,selConId2,selConId3,selConId4;
     int hr1,hr2;
     int time1,time2;
@@ -75,14 +75,16 @@ RadioButton rb1,rb2,rb3,rb4,rb5,rb6,rb7,rb11,rb12,rb13;
 
          rb1 = findViewById(R.id.radioContext11);
          rb2 =findViewById(R.id.radioContext12);
-        rb3 = findViewById(R.id.radioContext13);
+         rb3 = findViewById(R.id.radioContext13);
          rb4 = findViewById(R.id.radioContext14);
          rb5 = findViewById(R.id.radioContext15);
-        rb6 = findViewById(R.id.radioContext16);
-        rb7 = findViewById(R.id.radioContext17);
-        rb11 =findViewById(R.id.radioConfidence11);
-       rb12 = findViewById(R.id.radioConfidence12);
-        rb13 = findViewById(R.id.radioConfidence13);
+         rb6 = findViewById(R.id.radioContext16);
+         rb7 = findViewById(R.id.radioContext17);
+         rb8 = findViewById(R.id.radioContext18);
+         rb11 =findViewById(R.id.radioConfidence11);
+         rb12 = findViewById(R.id.radioConfidence12);
+         rb13 = findViewById(R.id.radioConfidence13);
+
         rb1.setId(1);
         rb2.setId(2);
         rb3.setId(3);
@@ -90,6 +92,7 @@ RadioButton rb1,rb2,rb3,rb4,rb5,rb6,rb7,rb11,rb12,rb13;
         rb5.setId(5);
         rb6.setId(6);
         rb7.setId(7);
+        rb8.setId(8);
         rb11.setId(11);
         rb11.setId(12);
         rb11.setId(13);
@@ -174,15 +177,21 @@ RadioButton rb1,rb2,rb3,rb4,rb5,rb6,rb7,rb11,rb12,rb13;
         String Context_string = (String)radioContextButton.getText();
 
         switch(Context_string) {
-            case "Static(formal gathering)": Context="Static(formal gathering)";
+            case "Static (Formal gathering)": Context="Static (Formal gathering)";
                 break;
-            case "Static(informal gathering)": Context="Static(informal gathering)";
+            case "Static (Informal gathering)": Context="Static (Informal gathering)";
                 break;
-            case "In vehicle(motorised 3 or 4)": Context="In vehicle(motorised 3 or 4)";
+            case "Walking Alone": Context="Walking Alone";
                 break;
-            case "In vehicle(train)": Context="In vehicle(train)";
+            case "Walking in a Group": Context="Walking in a Group";
                 break;
-            case "Walking": Context="Walking";
+            case "In vehicle (3-wheeler)": Context="In vehicle (3-wheeler)";
+                break;
+            case "In vehicle (4-wheeler)": Context="In vehicle (4-wheeler)";
+                break;
+            case "In vehicle (Train)": Context="In vehicle (Train)";
+                break;
+            case "No Activity": Context="No Activity";
                 break;
         }
         return Context;
