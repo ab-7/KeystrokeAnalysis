@@ -379,7 +379,6 @@ Context mContext;
     }
 
 
-
     @Override
     public void onKey(int i, int[] ints) {
 
@@ -422,6 +421,7 @@ Context mContext;
                 break;
                 case Keyboard.KEYCODE_DONE: {
                     ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
+                    ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER));
                 }
                 break;
                 case -2: {
