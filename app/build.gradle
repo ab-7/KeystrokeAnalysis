@@ -29,9 +29,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation files('libs/commons-net-1.4.1.jar')
     implementation files('libs/jAudio-1.0.4.jar')
-    implementation files('libs/jMusic1.6.5.jar')
     compile files('libs/jAudio-1.0.4.jar')
-    compile files('libs/jMusic1.6.5.jar')
     androidTestCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support:support-annotations:26.1.0'
     androidTestCompile 'com.android.support.test:runner:0.4.1'
@@ -40,6 +38,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:12.0.1'
     implementation 'com.google.android.gms:play-services-location:12.0.1'
     implementation 'com.google.android.gms:play-services:12.0.1'
+    compile 'com.dropbox.core:dropbox-core-sdk:3.0.8'
 }
 apply plugin: 'com.google.gms.google-services'
 

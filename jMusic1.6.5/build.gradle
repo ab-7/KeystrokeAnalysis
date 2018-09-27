@@ -1,2 +1,0 @@
-configurations.maybeCreate("default")
-artifacts.add("default", file('jMusic1.6.5.jar'))

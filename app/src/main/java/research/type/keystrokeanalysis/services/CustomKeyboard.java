@@ -65,12 +65,13 @@ public class CustomKeyboard  extends InputMethodService implements KeyboardView.
     int amplitude;double dB;
     int ifStatic=0,ifWalking=0,ifVehicle=0;
 
-    double pressure=0.0, duration, velocity, start,end;
+    double pressure, duration, velocity, start,end;
     double prev_pressure=0.0;
+    double prev_x_cord,prev_y_cord;
     private VelocityTracker mvelocity = null;
     double x_vel = 0.0, y_vel = 0.0;
     int n_event=1,np_event=1;
-Context mContext;
+    Context mContext;
     public static BufferedWriter out;
     private static final String LOG_TAG = "AudioRecordTest";
     private static String mFileName = null;
@@ -121,7 +122,8 @@ Context mContext;
             public boolean onTouch(View v, MotionEvent event) {
                 int index = event.getActionIndex();
                 int pointerId = event.getPointerId(index);
-
+                float x = event.getX(index);
+                float y = event.getY(index);
                 //check for actions of motion event
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     //setup velocity tracker
@@ -133,8 +135,9 @@ Context mContext;
                         mvelocity.clear();
                     }
                     //obtain pressure
-                    pressure = event.getPressure();
+                    pressure += event.getPressure();
                     np_event += 1;
+                    Log.d("ans", "ACTION_DOWN");
                 }
 
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -145,10 +148,19 @@ Context mContext;
                     x_vel+= abs(VelocityTrackerCompat.getXVelocity(mvelocity,pointerId));
                     y_vel += abs(VelocityTrackerCompat.getYVelocity(mvelocity, pointerId));
                     n_event+=1;
+                    Log.d("ans", "prev_x_cord" + prev_x_cord+",prev_y_cord"+prev_y_cord);
+                    Log.d("ans", "x_cord" + x+",y_cord"+y);
+                    if(x==prev_x_cord && y==prev_y_cord) {
+                        pressure += prev_pressure;
+                    }
+                    prev_x_cord=x;
+                    prev_y_cord=y;
+                    Log.d("ans", "ACTION_MOVE" + x+","+y);
                 }
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     //record time when finger lifted up
                     velocity = Math.sqrt(x_vel * x_vel + y_vel * y_vel);
+                    Log.d("ans", "ACTION_UP");
                 }
 
                 // Return false to avoid consuming the touch event
@@ -167,47 +179,57 @@ Context mContext;
         //calculate duration
         end = System.nanoTime();
         duration = (end-start)/1000000 ;
-      //  pressure=pressure/np_event;
-        if(prev_primary_code==primaryCode && pressure==0)
-            pressure=prev_pressure;
+        //pressure=pressure/np_event;
+        /*if(prev_primary_code==primaryCode) {
+            Log.d("ans", "Same key pressed ");
+            pressure += (prev_pressure);
+        //    pressure=pressure/np_event;
+        }*/
+        Log.d("ans", "n_event " + n_event );
+        Log.d("ans", "np_event " + np_event );
+        pressure=pressure/np_event;
+        //if (primaryCode == -5 || primaryCode == 32 || primaryCode == 64 || primaryCode == 42 || primaryCode == 94) {
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat sdf = new SimpleDateFormat(getResources().getString(R.string.time_format));
+        String currentDateandTime = sdf.format(new Date());
+        String keypress = String.valueOf((char) primaryCode );
+        String appName=getForegroundApp();
+        String keypressed = keypress;
+        if (primaryCode  == 32)
+            keypressed = "0";
+        else if (primaryCode  == -5)
+            keypressed = "1";
+        else if (primaryCode  == 64)
+            keypressed = "2";
+        else if (primaryCode  ==94)
+            keypressed = "3";
+        else if (primaryCode  == 42)
+            keypressed = "4";
+        else
+            keypressed = "99";
 
-        if (primaryCode == -5 || primaryCode == 32 || primaryCode == 64 || primaryCode == 42 || primaryCode == 94) {
-            @SuppressLint("SimpleDateFormat")
-            SimpleDateFormat sdf = new SimpleDateFormat(getResources().getString(R.string.time_format));
-            String currentDateandTime = sdf.format(new Date());
-            String keypress = String.valueOf((char) primaryCode );
-            String appName=getForegroundApp();
-            String keypressed = keypress;
-            if (primaryCode  == 32)
-                keypressed = "0";
-            if (primaryCode  == -5)
-                keypressed = "1";
-            if (primaryCode  == 64)
-                keypressed = "2";
-            if (primaryCode  ==94)
-                keypressed = "3";
-            if (primaryCode  == 42)
-                keypressed = "4";
+        //   Date date = new Date();
 
-         //   Date date = new Date();
+        Log.d("Key Pressed ", keypress);
+        System.out.println("Ascii value: " + (int) keypress.charAt(0));
+        System.out.println("Current app : " + appName);
+        System.out.println("Timestamp: " + currentDateandTime);
+        System.out.println("Duration: " + start+","+end+","+duration);
+        Log.d("ans", "Primary Code: " + primaryCode );
+        Log.d("ans", "prev_primary_code: " + prev_primary_code);
+        Log.d("ans", "X velocity: " + x_vel/n_event );
+        Log.d("ans", "Y velocity: " + y_vel/n_event);
+        Log.d("ans", "velocity: " + velocity);
+        Log.d("ans", "prev_pressure: " + prev_pressure );
+        Log.d("ans", "pressure: " + pressure);
+        Log.d("ans", "duration: " + duration);
+        writeToFile(currentDateandTime+ "," + appName + "," + keypressed+","+pressure+","+velocity+","+duration);
 
-            Log.d("Key Pressed ", keypress);
-            System.out.println("Ascii value: " + (int) keypress.charAt(0));
-            System.out.println("Current app : " + appName);
-            System.out.println("Timestamp: " + currentDateandTime);
-            System.out.println("Duration: " + start+","+end+","+duration);
-            Log.d("ans", "X velocity: " + x_vel/n_event );
-            Log.d("ans", "Y velocity: " + y_vel/n_event);
-            Log.d("ans", "velocity: " + velocity);
-            Log.d("ans", "pressure: " + pressure);
-            Log.d("ans", "duration: " + duration);
-            writeToFile(currentDateandTime+ "," + appName + "," + keypressed+","+pressure+","+velocity+","+duration);
-
-        }
+        //}
     /* start = 0;
         end = 0;*/
-    prev_pressure=pressure;
-    prev_primary_code=primaryCode;
+        prev_pressure=pressure;
+        prev_primary_code=primaryCode;
         x_vel = 0;
         y_vel = 0;
         n_event = 1;
@@ -256,25 +278,25 @@ Context mContext;
         long difference=0;int days1,hours1,min=0;
         if(prev_tap_time!=null)
         { difference = curr_tap_time.getTime() - prev_tap_time.getTime();
-        days1 = (int) (difference / (1000*60*60*24));
-        hours1 = (int) ((difference - (1000*60*60*24*days1)) / (1000*60*60));
-        min = (int) (difference - (1000*60*60*24*days1) - (1000*60*60*hours1)) / (1000*60);}
-      if(prev_tap_time==null || min>=1 )
-      {
-          if(!timerrecieved && prev_tap_time!=null)
-          {File file = new File(path+"/"+mFileName);
-              if (null != mRecorder) {
-                  isRecording = false;
-                  mRecorder.stop();
-                  mRecorder.release();
-                  mRecorder = null;
-                  recordingThread = null;
-              }
-          file.delete();}
-          startService(new Intent(this, TimerService.class));
-        Log.i(TAG, "Started service");
-      startRecording();
-      timerrecieved=false;}
+            days1 = (int) (difference / (1000*60*60*24));
+            hours1 = (int) ((difference - (1000*60*60*24*days1)) / (1000*60*60));
+            min = (int) (difference - (1000*60*60*24*days1) - (1000*60*60*hours1)) / (1000*60);}
+        if(prev_tap_time==null || min>=1 )
+        {
+            if(!timerrecieved && prev_tap_time!=null)
+            {File file = new File(path+"/"+mFileName);
+                if (null != mRecorder) {
+                    isRecording = false;
+                    mRecorder.stop();
+                    mRecorder.release();
+                    mRecorder = null;
+                    recordingThread = null;
+                }
+                file.delete();}
+            startService(new Intent(this, TimerService.class));
+            Log.i(TAG, "Started service");
+            startRecording();
+            timerrecieved=false;}
 
         start = System.nanoTime();
 
@@ -284,16 +306,16 @@ Context mContext;
         public void onReceive(Context context, Intent intent) {
             long millisUntilFinished=11000;
             if (intent.getExtras() != null) {
-                 millisUntilFinished = intent.getLongExtra("countdown", 0);}
+                millisUntilFinished = intent.getLongExtra("countdown", 0);}
             timerrecieved=true;
-                    Log.i(TAG, "Timer received");
-                   stopRecording();
+            Log.i(TAG, "Timer received");
+            stopRecording();
 
         }
     };
 
     private void startRecording() {
-       timerStartTime=new Date();
+        timerStartTime=new Date();
         mRecorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
                 RECORDER_SAMPLERATE, RECORDER_CHANNELS,
                 RECORDER_AUDIO_ENCODING, BufferElements2Rec * BytesPerElement);
@@ -305,11 +327,11 @@ Context mContext;
                 writeAudioDataToFile();
             }
         }, "AudioRecorder Thread");*/
-         data = new short[BufferElements2Rec];
+        data = new short[BufferElements2Rec];
         recordingThread = new Thread(new Runnable() {
             public void run() {
                 while(isRecording)
-                mRecorder.read(data, 0, BufferElements2Rec);
+                    mRecorder.read(data, 0, BufferElements2Rec);
             }
         }, "AudioRecorder Thread");
         recordingThread.start();
@@ -330,27 +352,27 @@ Context mContext;
             mRecorder = null;
             recordingThread = null;
         }
-       Log.d("Amplitude","amp-"+dB);
-        if(dB>60) {
+        Log.d("Amplitude","amp-"+dB);
+        if(dB>80) {
             ifStatic = 1;
             ifVehicle=5;
         }
         else {
             ifStatic = 2;
-         if (dB >= 40 && dB<= 60)
+            if (dB >= 65 && dB<= 80)
                 ifVehicle=6;
             else
-               ifVehicle=7;
+                ifVehicle=7;
         }
 
         boolean isGroup= GroupAudioDetector.isGroupFunc(samples);
         if(isGroup)
-           ifWalking=4;
+            ifWalking=4;
         else
             ifWalking=3;
         writeToAudioFile(timerStartTime+","+dB+","+ifStatic+","+ifWalking+","+ifVehicle);
         File file= new File(path + "/" + mFileName);
-       // file.delete();
+        // file.delete();
         mRecorder = null;
     }
 
@@ -385,7 +407,7 @@ Context mContext;
         InputConnection ic = getCurrentInputConnection();
         String s = "";
         playClick(i);
-         try
+        try
         {
             switch (i) {
                 case Keyboard.KEYCODE_DELETE: {
@@ -393,12 +415,12 @@ Context mContext;
                     CharSequence text=  ic.getTextBeforeCursor(2,0);
                     if(text.length()>1 && Character.isSurrogatePair(text.charAt(0), text.charAt(1)))
                         ic.deleteSurroundingText(2, 0);
-                   else if (TextUtils.isEmpty(selectedText)) {
+                    else if (TextUtils.isEmpty(selectedText)) {
                         // no selection, so delete previous character
                         ic.deleteSurroundingText(1, 0);
                     } else {
                         // delete the selection
-                       ic.commitText("", 1);
+                        ic.commitText("", 1);
                     }
 
                 }
@@ -426,15 +448,15 @@ Context mContext;
                 break;
                 case -2: {
 
-                        kv.setKeyboard(symbolKeyboard);
-                        mCurKeyboard = symbolKeyboard;
+                    kv.setKeyboard(symbolKeyboard);
+                    mCurKeyboard = symbolKeyboard;
                     kv.setOnKeyboardActionListener(this);
                     isSymbol = !isSymbol;
                     isSmiley=false;
                 }
                 break;
                 case -222: {
-                     {
+                    {
                         kv.setKeyboard(keyboard);
                         mCurKeyboard = keyboard;
                     }
@@ -456,8 +478,8 @@ Context mContext;
                 }
                 break;
                 case -9:{
-                        kv.setKeyboard(smileyKeyboard);
-                        mCurKeyboard = smileyKeyboard;
+                    kv.setKeyboard(smileyKeyboard);
+                    mCurKeyboard = smileyKeyboard;
                     kv.setOnKeyboardActionListener(this);
                     isSmiley=true;
                 }
@@ -468,6 +490,22 @@ Context mContext;
                         if (Character.isLetter(code) && isCaps)
                             code = Character.toUpperCase(code);
                         ic.commitText(String.valueOf(code), 1);
+                        if (Character.isLetter(code) && isCaps)
+
+                        {
+                            isCaps = !isCaps;
+
+                            Keyboard.Key shiftedKey = keyboard.getKeys().get(keyboard.getShiftKeyIndex());
+
+                            //noinspection deprecation
+
+                            shiftedKey.icon = getResources().getDrawable(R.drawable.sym_keyboard_shift);
+
+                            keyboard.setShifted(isCaps);
+
+                            kv.invalidateAllKeys();
+
+                        }
                     }
                     else{
                         String emoji=new String(Character.toChars(i));
@@ -477,9 +515,9 @@ Context mContext;
                 }
             }
         }catch (Exception e){
-             e.printStackTrace();
-             printException(e);
-         }
+            e.printStackTrace();
+            printException(e);
+        }
 
     }
 
@@ -559,7 +597,7 @@ Context mContext;
             trace.write(report.getBytes());
             trace.close();
         } catch (IOException ioe) {
-         ioe.printStackTrace();
+            ioe.printStackTrace();
         }
 
     }

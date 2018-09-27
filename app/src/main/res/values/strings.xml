@@ -16,4 +16,6 @@
     <string name="upload_data_interval">6</string>
     <string name="upload_data_timestamp">UploadDataTimeStamp</string>
 
+    <string name="DROPBOX_ACCESS_TOKEN">V569Yssz3tAAAAAAAAABtb5IP06EXC3ydTuY4KcZuHqPltkH1YwJwBMkdWaT80bo</string>
+
 </resources>

@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
+import research.type.keystrokeanalysis.services.UploadData;
+
 /**
  * Created by Adrija on 08-06-2018.
  */
@@ -26,8 +28,8 @@ import java.util.Date;
 public class ContextRecordPopUp extends AppCompatActivity {
 
 
-RadioButton rb1,rb2,rb3,rb4,rb5,rb6,rb7,rb8,rb11,rb12,rb13;
-    int selId1,selId2,selId3,selId4,selConId1,selConId2,selConId3,selConId4;
+    RadioButton rb1,rb2,rb3,rb4,rb5,rb6,rb7,rb8,rb11,rb12,rb13;
+    String selId1,selId2,selId3,selId4,selConId1,selConId2,selConId3,selConId4;
     int hr1,hr2;
     int time1,time2;
 
@@ -40,7 +42,7 @@ RadioButton rb1,rb2,rb3,rb4,rb5,rb6,rb7,rb8,rb11,rb12,rb13;
 
     private TextView timing;
     private TextView hour;
-   private Button btnRecordContext;
+    private Button btnRecordContext;
 
     public static BufferedWriter out;
     int count=0;
@@ -49,6 +51,8 @@ RadioButton rb1,rb2,rb3,rb4,rb5,rb6,rb7,rb8,rb11,rb12,rb13;
     @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        selId1="";selId2="";selId3="";selId4="";
+        selConId1="";selConId2="";selConId3="";selConId4="";
         setContentView(R.layout.context_confirmation);
         Date currentTime = Calendar.getInstance().getTime();
         super.onCreate(savedInstanceState);
@@ -58,10 +62,10 @@ RadioButton rb1,rb2,rb3,rb4,rb5,rb6,rb7,rb8,rb11,rb12,rb13;
       /*  String hr2=String.valueOf(currentTime.getHours())+":"+String.valueOf(currentTime.getMinutes())+":"+String.valueOf(currentTime.getSeconds());
        String hr1=(hr-4)+":"+String.valueOf(currentTime.getMinutes())+":"+String.valueOf(currentTime.getSeconds());*/
 
-      if(hr%4==0)
-     hr2=hr;
-      else
-          hr2 = (((24-hr)%4)+hr-4)%24;
+        if(hr%4==0)
+            hr2=hr;
+        else
+            hr2 = (((24-hr)%4)+hr-4)%24;
         hr1=hr2-4;
         if(hr2==0)
             hr1=20;
@@ -73,17 +77,17 @@ RadioButton rb1,rb2,rb3,rb4,rb5,rb6,rb7,rb8,rb11,rb12,rb13;
         hour.setText("Between "+time1+":00:00  and "+time2+":00:00"+" -");
         count=0;
 
-         rb1 = findViewById(R.id.radioContext11);
-         rb2 =findViewById(R.id.radioContext12);
-         rb3 = findViewById(R.id.radioContext13);
-         rb4 = findViewById(R.id.radioContext14);
-         rb5 = findViewById(R.id.radioContext15);
-         rb6 = findViewById(R.id.radioContext16);
-         rb7 = findViewById(R.id.radioContext17);
-         rb8 = findViewById(R.id.radioContext18);
-         rb11 =findViewById(R.id.radioConfidence11);
-         rb12 = findViewById(R.id.radioConfidence12);
-         rb13 = findViewById(R.id.radioConfidence13);
+        rb1 = findViewById(R.id.radioContext11);
+        rb2 =findViewById(R.id.radioContext12);
+        rb3 = findViewById(R.id.radioContext13);
+        rb4 = findViewById(R.id.radioContext14);
+        rb5 = findViewById(R.id.radioContext15);
+        rb6 = findViewById(R.id.radioContext16);
+        rb7 = findViewById(R.id.radioContext17);
+        rb8 = findViewById(R.id.radioContext18);
+        rb11 =findViewById(R.id.radioConfidence11);
+        rb12 = findViewById(R.id.radioConfidence12);
+        rb13 = findViewById(R.id.radioConfidence13);
 
         rb1.setId(1);
         rb2.setId(2);
@@ -132,36 +136,44 @@ RadioButton rb1,rb2,rb3,rb4,rb5,rb6,rb7,rb8,rb11,rb12,rb13;
 
                     if(count==1)
                     {
-                        selId1=selectedId;
-                        selConId1=selectedConfidenceId;
+                        selId1=Context1;
+                        selConId1=Confidence1;
                         time1=hr1+1;
                         time2=hr1+2;
                         hour.setText("Between "+time1+":00:00  and "+time2+":00:00"+"   ---");
+                        Toast.makeText(ContextRecordPopUp.this,"Hour 1 Context Taken", Toast.LENGTH_SHORT).show();
                     }
                     if(count==2) {
-                        selId2=selectedId;
-                        selConId2=selectedConfidenceId;
+                        selId2=Context1;
+                        selConId2=Confidence1;
                         time1=hr1+2;
                         time2=hr1+3;
                         hour.setText("Between "+time1+":00:00  and "+time2+":00:00"+"   ---");
+                        Toast.makeText(ContextRecordPopUp.this,"Hour 2 Context Taken", Toast.LENGTH_SHORT).show();
                     }
                     if(count==3)
                     {
-                        selId3=selectedId;
-                        selConId3=selectedConfidenceId;
+                        selId3=Context1;
+                        selConId3=Confidence1;
                         time1=hr1+3;
                         time2=hr1+4;
                         if(hr1==20)
-                           time2=00;
+                            time2=00;
                         hour.setText("Between "+time1+":00:00  and "+time2+":00:00"+"   ---");
+                        Toast.makeText(ContextRecordPopUp.this,"Hour 3 Context Taken", Toast.LENGTH_SHORT).show();
                     }
 
                     if(count==4)
                     {
-                        selId4=selectedId;
-                        selConId4=selectedConfidenceId;
+                        selId4=Context1;
+                        selConId4=Confidence1;
                         Date date=new Date();
-                        writeToFile(date +","+hr1+","+hr2+ "," + selId1 + "," + selConId1 + selId2 + "," + selConId2 + selId3 + "," + selConId3 + selId4 + "," + selConId4);
+                        writeToFile(date +","+hr1+","+hr2+ "," + selId1 + "," + selConId1 +","+ selId2 + "," + selConId2 +","+ selId3 + "," + selConId3 +","+ selId4 + "," + selConId4);
+                        Toast.makeText(ContextRecordPopUp.this,"All Choices Recorded", Toast.LENGTH_SHORT).show();
+                        //change begin
+                        Intent intent1 = new Intent(ContextRecordPopUp.this,UploadData.class);
+                        startService(intent1);
+                        //change end
                         finishAndRemoveTask();
                     }
                 }

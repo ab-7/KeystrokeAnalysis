@@ -25,6 +25,13 @@ import java.util.Date;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import com.dropbox.core.DbxException;
+import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.ListFolderResult;
+import com.dropbox.core.v2.files.Metadata;
+import com.dropbox.core.v2.users.FullAccount;
 
 import research.type.keystrokeanalysis.LastUploaded;
 import research.type.keystrokeanalysis.MainActivity;
@@ -36,7 +43,8 @@ public class UploadData extends IntentService {
     public Date curr_time;
 
     String upLoadServerUri;
-
+    private String ACCESS_TOKEN=null;
+    private String FILE_PATH=null;
     public UploadData() {
         super("UploadData");
     }
@@ -45,6 +53,8 @@ public class UploadData extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             upLoadServerUri = getString(R.string.keystrokeanalysis_server_uri)+getString(R.string.upload_data_page);
+            ACCESS_TOKEN=getString(R.string.DROPBOX_ACCESS_TOKEN);
+            FILE_PATH=getString(R.string.keystrokeanalysis_file_path);
             ConnectivityManager cm =
                     (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -156,6 +166,8 @@ public class UploadData extends IntentService {
     }
 
     public int uploadFile(String sourceFileUri) {
+        ACCESS_TOKEN=getString(R.string.DROPBOX_ACCESS_TOKEN);
+        FILE_PATH=getString(R.string.keystrokeanalysis_file_path);
         String fileName = sourceFileUri;
         HttpURLConnection conn = null;
         DataOutputStream dos = null;
@@ -165,7 +177,14 @@ public class UploadData extends IntentService {
         int bytesRead, bytesAvailable, bufferSize;
         byte[] buffer;
         int maxBufferSize = 1 * 1024 * 1024;
+
+        String time_tag=Long.toString(System.currentTimeMillis());
         File sourceFile = new File(sourceFileUri);
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        String imei_no = telephonyManager.getDeviceId();
+        DbxRequestConfig config = new DbxRequestConfig("dropbox/java-tutorial", "en_US");
+        DbxClientV2 client = new DbxClientV2(config, ACCESS_TOKEN);
+
         if (!sourceFile.isFile()) {
 
             //  dialog.dismiss();
@@ -186,9 +205,9 @@ public class UploadData extends IntentService {
                 // open a URL connection to the Servlet
                 FileInputStream fileInputStream = new FileInputStream(sourceFile);
                 URL url = new URL(upLoadServerUri);
-
+                FileMetadata metadata = client.files().uploadBuilder("/"+imei_no+"_"+time_tag+".zip").uploadAndFinish(fileInputStream);
                 // Open a HTTP  connection to  the URL
-                conn = (HttpURLConnection) url.openConnection();
+                /*conn = (HttpURLConnection) url.openConnection();
                 System.out.println("Conn:"+conn);
                 conn.setDoInput(true); // Allow Inputs
                 conn.setDoOutput(true); // Allow Outputs
@@ -197,11 +216,12 @@ public class UploadData extends IntentService {
                 conn.setRequestProperty("Connection", "Keep-Alive");
                 conn.setRequestProperty("ENCTYPE", "multipart/form-data");
                 conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-                conn.setRequestProperty("uploaded_file", fileName);
+                conn.setRequestProperty("uploaded_file", fileName);*/
 
-                dos = new DataOutputStream(conn.getOutputStream());
 
-                dos.writeBytes(twoHyphens + boundary + lineEnd);
+                //dos = new DataOutputStream(conn.getOutputStream());
+
+                /*dos.writeBytes(twoHyphens + boundary + lineEnd);
                 dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file\";filename=\""
                         + fileName + "\"" + lineEnd);
 
@@ -253,10 +273,12 @@ public class UploadData extends IntentService {
                 //close the streams //
                 fileInputStream.close();
                 dos.flush();
-                dos.close();
-
+                dos.close();*/
+                LastUploaded appState =new LastUploaded();
+                Toast.makeText(UploadData.this, "File Upload Completed", Toast.LENGTH_SHORT).show();
+                appState.setLupdata(1);
                 long upload_data_interval = 1000 * 60 * 60 * Integer.parseInt(getResources().getString(R.string.upload_data_interval));
-                 curr_time = new Date();
+                curr_time = new Date();
                 appState.setCurrTime(curr_time);
                 MainActivity.storeLastDate(appState);
                 Date next_upload_data_time = new Date(curr_time.getTime() + upload_data_interval);
